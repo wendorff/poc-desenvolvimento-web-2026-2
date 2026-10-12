@@ -1,0 +1,112 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    margin: 0;
+    background: #f7f7f7;
+    color: #222;
+}
+
+header {
+    background: #2c5f8a;
+    color: #fff;
+    padding: 12px 20px;
+}
+
+header h1 {
+    font-size: 18px;
+    margin: 0 0 6px;
+}
+
+header a {
+    color: #fff;
+    margin-right: 14px;
+    text-decoration: none;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+section {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 16px;
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+label span {
+    display: block;
+    margin-bottom: 3px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    max-width: 360px;
+    padding: 6px;
+    border: 1px solid #bbb;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 7px 14px;
+    border: 1px solid #2c5f8a;
+    background: #2c5f8a;
+    color: #fff;
+    cursor: pointer;
+}
+
+button.secondary {
+    background: #fff;
+    color: #2c5f8a;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px 6px;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.error {
+    background: #fdecea;
+    border: 1px solid #e0b4b0;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+}
+
+.field-error {
+    color: #b3261e;
+    font-size: 13px;
+}
+
+.empty {
+    color: #666;
+    padding: 10px 0;
+}

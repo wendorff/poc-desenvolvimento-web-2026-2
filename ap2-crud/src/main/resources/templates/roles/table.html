@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="table" id="table-area">
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+
+    <p class="empty" th:if="${#lists.isEmpty(roles)}">Nenhum papel cadastrado.</p>
+
+    <table th:unless="${#lists.isEmpty(roles)}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="role : ${roles}">
+            <td th:text="${role.name}"></td>
+            <td th:text="${role.description}"></td>
+            <td>
+                <a th:href="@{/roles/{id}/edit(id=${role.id})}">Editar</a>
+                <button type="button"
+                        th:attr="hx-delete=@{/roles/{id}(id=${role.id})}"
+                        hx-target="#table-area"
+                        hx-swap="outerHTML"
+                        hx-confirm="Excluir este papel?">Excluir
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

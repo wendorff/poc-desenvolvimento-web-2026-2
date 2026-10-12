@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="table" id="table-area">
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+
+    <p class="empty" th:if="${#lists.isEmpty(users)}">Nenhum usuário cadastrado.</p>
+
+    <table th:unless="${#lists.isEmpty(users)}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Papel</th>
+            <th>Situação</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.roleName}"></td>
+            <td th:text="${user.active} ? 'Ativo' : 'Inativo'"></td>
+            <td>
+                <a th:href="@{/users/{id}/edit(id=${user.id})}">Editar</a>
+                <button type="button"
+                        th:attr="hx-delete=@{/users/{id}(id=${user.id})}"
+                        hx-target="#table-area"
+                        hx-swap="outerHTML"
+                        hx-confirm="Excluir este usuário?">Excluir
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

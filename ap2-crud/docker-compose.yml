@@ -1,0 +1,27 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: sgfh-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    container_name: sgfh-app
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/sgfh
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo-data:

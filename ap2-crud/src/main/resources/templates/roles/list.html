@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Papéis - SGFH</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <script th:src="@{/htmx.min.js}"></script>
+</head>
+<body>
+
+<header>
+    <h1>SGFH - Sistema de Gestão de Farmácia Hospitalar</h1>
+    <nav>
+        <a th:href="@{/users}">Usuários</a>
+        <a th:href="@{/roles}">Papéis</a>
+    </nav>
+</header>
+
+<main>
+
+    <section>
+        <h2 th:text="${roleForm.id} == null ? 'Novo papel' : 'Editar papel'">Novo papel</h2>
+
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/roles}" method="post">
+            <input type="hidden" name="id" th:value="${roleForm.id}">
+
+            <label>
+                <span>Nome</span>
+                <input type="text" name="name" th:value="${roleForm.name}">
+                <span class="field-error"
+                      th:if="${#fields.hasErrors('roleForm.name')}"
+                      th:errors="${roleForm.name}"></span>
+            </label>
+
+            <label>
+                <span>Descrição</span>
+                <input type="text" name="description" th:value="${roleForm.description}">
+                <span class="field-error"
+                      th:if="${#fields.hasErrors('roleForm.description')}"
+                      th:errors="${roleForm.description}"></span>
+            </label>
+
+            <button type="submit">Salvar</button>
+            <a th:href="@{/roles}" th:if="${roleForm.id} != null">
+                <button type="button" class="secondary">Cancelar</button>
+            </a>
+        </form>
+    </section>
+
+    <section>
+        <h2>Papéis cadastrados</h2>
+        <div th:replace="~{roles/table :: table}"></div>
+    </section>
+
+</main>
+
+</body>
+</html>
