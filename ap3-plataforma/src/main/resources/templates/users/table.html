@@ -1,45 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
+
+<!--/* Resposta do hx-delete: a tabela atualizada e o aviso do resultado */-->
+<th:block th:fragment="response">
+    <div th:replace="~{users/table :: table}"></div>
+    <th:block th:replace="~{fragments/feedback :: oob-toasts}"></th:block>
+</th:block>
+
 <div th:fragment="table" id="table-area">
 
-    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <div class="empty-state" th:if="${#lists.isEmpty(users)}">
+        <svg th:replace="~{fragments/icons :: icon(${#strings.isEmpty(query)} ? 'users' : 'search-x')}"></svg>
+        <p th:text="${#strings.isEmpty(query)} ? 'Nenhum usuário cadastrado.' : |Nenhum usuário encontrado para “${query}”.|">
+            Nenhum usuário cadastrado.</p>
+    </div>
 
-    <p class="empty" th:if="${#lists.isEmpty(users)}">Nenhum usuário cadastrado.</p>
-
-    <table th:unless="${#lists.isEmpty(users)}">
-        <thead>
-        <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Papel</th>
-            <th>Situação</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="user : ${users}">
-            <td>
-                <span th:text="${user.name}"></span>
-                <span class="muted" th:if="${currentUser != null and currentUser.id == user.id}">(você)</span>
-            </td>
-            <td th:text="${user.email}"></td>
-            <td th:text="${user.roleName}"></td>
-            <td th:text="${user.active} ? 'Ativo' : 'Inativo'"></td>
-            <td>
-                <a th:href="@{/users/{id}/edit(id=${user.id})}">Editar</a>
-                <button type="button"
-                        th:unless="${currentUser != null and currentUser.id == user.id}"
-                        th:attr="hx-delete=@{/users/{id}(id=${user.id})}"
-                        hx-target="#table-area"
-                        hx-swap="outerHTML"
-                        hx-confirm="Excluir este usuário?">Excluir
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-wrap" th:unless="${#lists.isEmpty(users)}">
+        <table class="table">
+            <caption class="visually-hidden">Usuários cadastrados</caption>
+            <thead>
+            <tr>
+                <th scope="col">Usuário</th>
+                <th scope="col">Papel</th>
+                <th scope="col">Situação</th>
+                <th scope="col" class="cell-actions"><span class="visually-hidden">Ações</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}" th:classappend="${userForm?.id == user.id} ? 'is-selected'">
+                <td>
+                    <div class="cell-primary">
+                        <span th:text="${user.name}">Nome</span>
+                        <span class="badge badge-primary" th:if="${currentUser?.id == user.id}">Você</span>
+                    </div>
+                    <div class="cell-secondary" th:text="${user.email}">email@sgfh.local</div>
+                </td>
+                <td><span class="code-tag" th:text="${user.roleName}">PAPEL</span></td>
+                <td>
+                    <span class="status" th:classappend="${user.active} ? 'status-ok' : 'status-off'"
+                          th:text="${user.active} ? 'Ativo' : 'Inativo'">Ativo</span>
+                </td>
+                <td class="cell-actions">
+                    <div class="row-actions">
+                        <a class="btn btn-secondary btn-sm" th:href="@{/users/{id}/edit(id=${user.id})}">
+                            <svg th:replace="~{fragments/icons :: icon('pencil')}"></svg>
+                            <span>Editar<span class="visually-hidden" th:text="| ${user.name}|"></span></span>
+                        </a>
+                        <button type="button" class="btn btn-danger-quiet btn-sm"
+                                th:unless="${currentUser?.id == user.id}"
+                                th:attr="hx-delete=@{/users/{id}(id=${user.id})}, hx-confirm=|Excluir o usuário ${user.name}?|"
+                                data-confirm-action="Excluir usuário"
+                                hx-target="#table-area" hx-swap="outerHTML"
+                                hx-include="#user-search" hx-disabled-elt="this">
+                            <svg th:replace="~{fragments/icons :: icon('trash')}"></svg>
+                            <span>Excluir<span class="visually-hidden" th:text="| ${user.name}|"></span></span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
+
 </body>
 </html>

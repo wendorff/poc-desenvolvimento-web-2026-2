@@ -1,37 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
+
+<!--/* Resposta do hx-delete: a tabela atualizada e o aviso do resultado */-->
+<th:block th:fragment="response">
+    <div th:replace="~{roles/table :: table}"></div>
+    <th:block th:replace="~{fragments/feedback :: oob-toasts}"></th:block>
+</th:block>
+
 <div th:fragment="table" id="table-area">
 
-    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <div class="empty-state" th:if="${#lists.isEmpty(roles)}">
+        <svg th:replace="~{fragments/icons :: icon('shield-check')}"></svg>
+        <p>Nenhum papel cadastrado.</p>
+    </div>
 
-    <p class="empty" th:if="${#lists.isEmpty(roles)}">Nenhum papel cadastrado.</p>
-
-    <table th:unless="${#lists.isEmpty(roles)}">
-        <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="role : ${roles}">
-            <td th:text="${role.name}"></td>
-            <td th:text="${role.description}"></td>
-            <td>
-                <a th:href="@{/roles/{id}/edit(id=${role.id})}">Editar</a>
-                <button type="button"
-                        th:attr="hx-delete=@{/roles/{id}(id=${role.id})}"
-                        hx-target="#table-area"
-                        hx-swap="outerHTML"
-                        hx-confirm="Excluir este papel?">Excluir
-                </button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-wrap" th:unless="${#lists.isEmpty(roles)}">
+        <table class="table">
+            <caption class="visually-hidden">Papéis cadastrados</caption>
+            <thead>
+            <tr>
+                <th scope="col">Papel</th>
+                <th scope="col">Descrição</th>
+                <th scope="col" class="cell-actions"><span class="visually-hidden">Ações</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="role : ${roles}" th:classappend="${roleForm?.id == role.id} ? 'is-selected'">
+                <td><span class="code-tag" th:text="${role.name}">PAPEL</span></td>
+                <td class="cell-secondary" th:text="${#strings.isEmpty(role.description)} ? '—' : ${role.description}">Descrição</td>
+                <td class="cell-actions">
+                    <div class="row-actions">
+                        <a class="btn btn-secondary btn-sm" th:href="@{/roles/{id}/edit(id=${role.id})}">
+                            <svg th:replace="~{fragments/icons :: icon('pencil')}"></svg>
+                            <span>Editar<span class="visually-hidden" th:text="| ${role.name}|"></span></span>
+                        </a>
+                        <button type="button" class="btn btn-danger-quiet btn-sm"
+                                th:attr="hx-delete=@{/roles/{id}(id=${role.id})}, hx-confirm=|Excluir o papel ${role.name}?|"
+                                data-confirm-action="Excluir papel"
+                                hx-target="#table-area" hx-swap="outerHTML" hx-disabled-elt="this">
+                            <svg th:replace="~{fragments/icons :: icon('trash')}"></svg>
+                            <span>Excluir<span class="visually-hidden" th:text="| ${role.name}|"></span></span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
+
 </body>
 </html>

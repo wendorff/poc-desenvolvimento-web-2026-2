@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Erro')}"></head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: page('Erro', '', ~{::content})}">
 <body>
+<th:block th:fragment="content">
 
-<header th:replace="~{fragments/layout :: header('')}"></header>
-
-<main>
-    <section>
-        <h2 th:text="${status} == 404 ? 'Página não encontrada' : 'Algo deu errado'">Algo deu errado</h2>
-        <p th:text="'Código ' + ${status}">Código</p>
-        <a th:href="@{/}">Voltar ao início</a>
+    <section class="panel status-page">
+        <span class="icon-tile icon-tile-lg">
+            <svg th:replace="~{fragments/icons :: icon(${status} == 404 ? 'search-x' : 'triangle-alert')}"></svg>
+        </span>
+        <p class="eyebrow" th:text="|Erro ${status}|">Erro</p>
+        <h1 th:text="${status} == 404 ? 'Página não encontrada' : 'Algo deu errado'">Algo deu errado</h1>
+        <p class="page-lead" th:if="${status == 404}">O endereço não existe ou o registro foi removido.</p>
+        <p class="page-lead" th:unless="${status == 404}">
+            A operação não foi concluída. Tente novamente; se o problema continuar, avise o suporte.</p>
+        <a class="btn btn-primary" th:href="@{/}">
+            <svg th:replace="~{fragments/icons :: icon('house')}"></svg>
+            <span>Voltar ao início</span>
+        </a>
     </section>
-</main>
 
+</th:block>
 </body>
 </html>

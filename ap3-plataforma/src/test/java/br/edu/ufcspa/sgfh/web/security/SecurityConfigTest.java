@@ -18,16 +18,21 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @Import({SecurityConfig.class, UserWebMapper.class, RoleWebMapper.class})
 class SecurityConfigTest {
+
+    private static final String SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
 
     @Autowired
     private MockMvc mvc;
@@ -98,5 +103,39 @@ class SecurityConfigTest {
     void postWithoutCsrfIsRejected() throws Exception {
         mvc.perform(post("/roles").param("name", "NOVO").with(as(Role.ADMINISTRATOR)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Arquivos do frontend sao publicos, para a tela de login carregar CSS e JS")
+    void assetsArePublic() throws Exception {
+        mvc.perform(get("/assets/app.css"))
+                .andExpect(header().doesNotExist("Location"));
+    }
+
+    @Test
+    @DisplayName("Toda resposta envia Content-Security-Policy sem codigo inline")
+    void responsesCarryContentSecurityPolicy() throws Exception {
+        mvc.perform(get("/login"))
+                .andExpect(header().string("Content-Security-Policy", containsString("script-src 'self'")))
+                .andExpect(header().string("Content-Security-Policy", containsString("style-src 'self'")))
+                .andExpect(header().string("Content-Security-Policy", not(containsString("unsafe-inline"))));
+    }
+
+    @Test
+    @DisplayName("Requisicao htmx sem sessao recebe HX-Redirect para o login em vez da tela de login")
+    void htmxRequestWithoutSessionIsRedirectedByHeader() throws Exception {
+        mvc.perform(get("/integrations/cnpj").param("cnpj", "19131243000197").header("HX-Request", "true"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string("HX-Redirect", "/login"))
+                .andExpect(request().sessionAttributeDoesNotExist(SAVED_REQUEST));
+    }
+
+    @Test
+    @DisplayName("Navegacao com hx-boost sem sessao volta para a mesma pagina depois do login")
+    void boostedNavigationWithoutSessionIsResumedAfterLogin() throws Exception {
+        mvc.perform(get("/roles").header("HX-Request", "true").header("HX-Boosted", "true"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string("HX-Redirect", "/login"))
+                .andExpect(request().sessionAttribute(SAVED_REQUEST, notNullValue()));
     }
 }

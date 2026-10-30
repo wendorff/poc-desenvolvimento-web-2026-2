@@ -1,0 +1,80 @@
+/*
+ * Tokens de design. Toda cor, espaço e raio da interface sai daqui.
+ * Contraste: texto e ícones informativos atendem WCAG AA (4.5:1) sobre o fundo em que aparecem.
+ */
+:root {
+  color-scheme: light;
+
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow: 0 1px 3px rgb(16 24 40 / 0.1), 0 1px 2px rgb(16 24 40 / 0.06);
+  --shadow-lg: 0 12px 24px -6px rgb(16 24 40 / 0.18), 0 4px 8px -4px rgb(16 24 40 / 0.08);
+
+  /* Neutras */
+  --color-bg: #f3f5f7;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f7f9fa;
+  --color-hover: #f5f8fb;
+  --color-border: #dde2e7;
+  --color-border-strong: #b9c2cb;
+  --color-text: #15202b;
+  --color-text-muted: #56636f;
+  --color-placeholder: #6b7884;
+
+  /* Marca */
+  --color-primary: #1c5a8a;
+  --color-primary-hover: #154670;
+  --color-primary-soft: #e8f1f8;
+  --color-link: #1c5a8a;
+  --color-link-hover: #123c60;
+
+  /* Barra lateral e painéis escuros */
+  --color-sidebar: #0f2133;
+  --color-sidebar-hover: #182f46;
+  --color-sidebar-active: #1d3a57;
+  --color-sidebar-line: rgb(255 255 255 / 0.1);
+  --color-sidebar-text: #c9d6e2;
+  --color-sidebar-muted: #8aa0b4;
+  --color-sidebar-accent: #6cb4ee;
+
+  /* Estados */
+  --color-success: #17693a;
+  --color-success-soft: #e7f4ec;
+  --color-success-border: #b4dcc3;
+  --color-warning: #7a4f00;
+  --color-warning-soft: #fdf4e1;
+  --color-warning-border: #ecd193;
+  --color-danger: #b0251b;
+  --color-danger-hover: #8f1d15;
+  --color-danger-soft: #fcebea;
+  --color-danger-border: #f0bcb7;
+  --color-info: #1c5a8a;
+  --color-info-soft: #e8f1f8;
+  --color-info-border: #b8d2e6;
+
+  /* Foco: azul forte sobre fundo claro, âmbar sobre fundo escuro (ver .sidebar) */
+  --color-focus: #1a66c9;
+  --color-focus-on-dark: #ffc34d;
+}

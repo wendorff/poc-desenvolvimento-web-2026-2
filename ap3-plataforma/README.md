@@ -18,6 +18,8 @@ clientes das APIs externas previstas na AP1 e as telas de cada módulo implement
   - **RxNav (RxNorm)**: normaliza o nome digitado para o RxCUI e a grafia canônica
   - **BrasilAPI**: valida o CNPJ e traz razão social e situação cadastral do fornecedor
 - Página inicial com os módulos liberados e as próximas etapas do projeto
+- **Interface sem recarregar a página** (htmx): navegação, salvamento, busca de usuários enquanto
+  se digita e exclusão com diálogo de confirmação, com avisos de sucesso e de erro
 
 ### Regras de negócio
 
@@ -56,12 +58,13 @@ regras, então não há duplicação entre o que a tela mostra e o que o servido
 
 | Camada | Tecnologia |
 | --- | --- |
-| Frontend | Thymeleaf + htmx |
-| Backend | Java 17 + Spring Boot 4.1.1 |
+| Frontend | Thymeleaf + htmx 2, empacotados com Vite 8 |
+| Interface | CSS próprio com tokens de design; fontes IBM Plex servidas pela aplicação |
+| Backend | Java 25 + Spring Boot 4.1.1 |
 | Segurança | Spring Security (sessão, BCrypt, CSRF) |
 | Integrações | Spring `RestClient` |
 | Banco de dados | MongoDB 7 |
-| Build | Maven (wrapper incluído) |
+| Build | Maven (wrapper incluído), que também baixa o Node e roda o build do Vite |
 | Execução | Docker Compose |
 
 ## Como executar
@@ -84,7 +87,8 @@ docker compose down -v
 
 ### Opção 2: Rodar local com Mongo em container
 
-Requer JDK 17 ou superior.
+Requer JDK 25. Não é preciso ter Node instalado: na primeira execução o Maven baixa um Node
+próprio do projeto (pasta `node/`) e compila o frontend antes de subir a aplicação.
 
 ```bash
 docker run -d -p 27017:27017 --name sgfh-mongo mongo:7
@@ -98,7 +102,8 @@ docker run -d -p 27017:27017 --name sgfh-mongo mongo:7
 ```
 
 Os testes não precisam de banco nem de internet: os serviços usam repositórios em memória e
-os clientes das APIs externas são testados contra um servidor HTTP simulado.
+os clientes das APIs externas são testados contra um servidor HTTP simulado. Só a primeira
+execução do build usa a rede, para baixar o Node e as dependências do frontend.
 
 ### Variáveis de ambiente
 
@@ -147,6 +152,44 @@ chamadas feitas por servidores (HTTP 403), aceitando apenas o navegador do site 
 cliente foi implementado e testado contra o formato documentado da resposta, e a tela informa
 o bloqueio quando ele acontece. RxNav e BrasilAPI respondem normalmente.
 
+## Frontend
+
+As telas são renderizadas no servidor (Thymeleaf) e o htmx troca só os pedaços que mudam, então
+não há estado de tela duplicado no navegador. O código do frontend fica em `src/main/frontend` e o
+Vite gera o bundle em `target/classes/static/assets`, que o Spring serve em `/assets` com o hash do
+conteúdo na URL (cache longo no navegador, sem risco de arquivo desatualizado).
+
+| Caminho | Conteúdo |
+| --- | --- |
+| `main.js` | Ponto de entrada: importa CSS, htmx e módulos, e liga o modo estrito do htmx |
+| `js/` | Token CSRF nas requisições, avisos, diálogo de confirmação, máscara de CNPJ e dicas flutuantes |
+| `css/` | Tokens de design (cores, espaços, tipografia), base, layout, componentes e páginas |
+| `public/` | Arquivos copiados sem alteração (favicon) |
+| `templates/fragments/` | Layout da aplicação, ícones (Lucide, SVG inline) e componentes de aviso |
+
+Decisões de segurança e robustez da interface:
+
+- **Content-Security-Policy** sem `unsafe-inline`: script, estilo e fonte só do próprio servidor
+- htmx em modo estrito: sem `eval` e sem executar `<script>` vindo nas respostas
+- O histórico não guarda cópia das páginas no navegador, já que elas podem conter dados de
+  pacientes; voltar uma página recarrega do servidor
+- Sessão expirada durante uma ação do htmx leva ao login pelo cabeçalho `HX-Redirect`, sem
+  encaixar a tela de login dentro da página
+- Exclusão sempre pede confirmação num diálogo que abre com o foco em **Cancelar**
+- O botão de envio fica desabilitado durante a requisição, evitando cadastro em dobro
+- A validação é sempre do servidor; o erro aparece no campo e num resumo no topo do formulário
+- Contraste de cores no nível AA da WCAG, foco visível em todos os controles e link para pular
+  direto ao conteúdo
+
+Para mexer no CSS ou no JavaScript com a aplicação rodando, suba a aplicação sem o cache de
+URLs dos arquivos e deixe o Vite recompilando a cada alteração (requer Node 20.19+ ou 22.12+);
+basta recarregar a página para ver a mudança:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments=--spring.web.resources.chain.cache=false
+npm run watch   # em outro terminal
+```
+
 ## Estrutura do projeto
 
 O código segue uma separação em camadas no estilo Clean Architecture:
@@ -184,7 +227,7 @@ A regra de dependência aponta sempre para dentro: `web` e `infrastructure` conh
 | POST | `/login` | público | Autentica (Spring Security) |
 | POST | `/logout` | autenticado | Encerra a sessão |
 | GET | `/` | autenticado | Página inicial |
-| GET | `/users` | ADMINISTRADOR | Lista usuários e exibe o formulário |
+| GET | `/users?q=` | ADMINISTRADOR | Lista usuários (com busca opcional) e exibe o formulário |
 | GET | `/users/{id}/edit` | ADMINISTRADOR | Carrega um usuário no formulário |
 | POST | `/users` | ADMINISTRADOR | Cria ou atualiza um usuário |
 | DELETE | `/users/{id}` | ADMINISTRADOR | Exclui um usuário (htmx) |

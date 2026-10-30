@@ -2,79 +2,137 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<div th:fragment="anvisa">
-    <div class="error" th:if="${error}" th:text="${error}"></div>
-    <th:block th:unless="${error}">
-        <p class="empty" th:if="${#lists.isEmpty(leaflets)}">Nenhum medicamento encontrado.</p>
-        <table th:unless="${#lists.isEmpty(leaflets)}">
-            <thead>
-            <tr>
-                <th>Produto</th>
-                <th>Empresa</th>
-                <th>Registro</th>
-                <th>Bulas</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="leaflet : ${leaflets}">
-                <td th:text="${leaflet.productName}"></td>
-                <td th:text="${leaflet.company}"></td>
-                <td th:text="${leaflet.registrationNumber}"></td>
-                <td>
-                    <a th:if="${leaflet.professionalLeafletUrl}" th:href="${leaflet.professionalLeafletUrl}"
-                       target="_blank" rel="noopener">Profissional</a>
-                    <a th:if="${leaflet.patientLeafletUrl}" th:href="${leaflet.patientLeafletUrl}"
-                       target="_blank" rel="noopener">Paciente</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<th:block th:fragment="anvisa">
+    <th:block th:if="${error}">
+        <div th:replace="~{fragments/feedback :: alert('error', ${error})}"></div>
     </th:block>
-</div>
-
-<div th:fragment="rxnav">
-    <div class="error" th:if="${error}" th:text="${error}"></div>
     <th:block th:unless="${error}">
-        <p class="empty" th:if="${#lists.isEmpty(concepts)}">Nenhum conceito encontrado no RxNorm.</p>
-        <table th:unless="${#lists.isEmpty(concepts)}">
-            <thead>
-            <tr>
-                <th>RxCUI</th>
-                <th>Nome canônico</th>
-                <th>Tipo</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="concept : ${concepts}">
-                <td><a th:href="'https://mor.nlm.nih.gov/RxNav/search?searchBy=RXCUI&searchTerm=' + ${concept.rxcui}"
-                       th:text="${concept.rxcui}" target="_blank" rel="noopener"></a></td>
-                <td th:text="${concept.name}"></td>
-                <td th:text="${concept.termType}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="empty-state empty-state-compact" th:if="${#lists.isEmpty(leaflets)}">
+            <svg th:replace="~{fragments/icons :: icon('search-x')}"></svg>
+            <p>Nenhum medicamento encontrado.</p>
+        </div>
+        <div class="table-wrap table-framed" th:unless="${#lists.isEmpty(leaflets)}">
+            <table class="table">
+                <caption class="visually-hidden">Medicamentos encontrados no Bulário Eletrônico</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Produto</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Registro</th>
+                    <th scope="col">Bulas</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="leaflet : ${leaflets}">
+                    <td class="cell-strong" th:text="${leaflet.productName}">Produto</td>
+                    <td th:text="${leaflet.company}">Empresa</td>
+                    <td class="mono" th:text="${leaflet.registrationNumber}">0000000000000</td>
+                    <td>
+                        <div class="link-list">
+                            <a th:if="${leaflet.professionalLeafletUrl}" th:href="${leaflet.professionalLeafletUrl}"
+                               target="_blank" rel="noopener noreferrer">
+                                Profissional
+                                <svg th:replace="~{fragments/icons :: icon('external-link')}"></svg>
+                                <span class="visually-hidden">(abre em nova aba)</span>
+                            </a>
+                            <a th:if="${leaflet.patientLeafletUrl}" th:href="${leaflet.patientLeafletUrl}"
+                               target="_blank" rel="noopener noreferrer">
+                                Paciente
+                                <svg th:replace="~{fragments/icons :: icon('external-link')}"></svg>
+                                <span class="visually-hidden">(abre em nova aba)</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </th:block>
-</div>
+</th:block>
 
-<div th:fragment="cnpj">
-    <div class="error" th:if="${error}" th:text="${error}"></div>
-    <dl class="details" th:if="${company}">
-        <dt>CNPJ</dt>
-        <dd th:text="${company.cnpj.formatted()}"></dd>
-        <dt>Razão social</dt>
-        <dd th:text="${company.legalName}"></dd>
-        <dt>Nome fantasia</dt>
-        <dd th:text="${#strings.isEmpty(company.tradeName)} ? '-' : ${company.tradeName}"></dd>
-        <dt>Município</dt>
-        <dd th:text="${company.city} + ' / ' + ${company.state}"></dd>
-        <dt>Situação</dt>
-        <dd>
-            <span th:text="${company.registrationStatus}"></span>
-            <span class="badge ok" th:if="${company.active}">Apto a fornecer</span>
-            <span class="badge blocked" th:unless="${company.active}">Fornecimento bloqueado</span>
-        </dd>
-    </dl>
-</div>
+<th:block th:fragment="rxnav">
+    <th:block th:if="${error}">
+        <div th:replace="~{fragments/feedback :: alert('error', ${error})}"></div>
+    </th:block>
+    <th:block th:unless="${error}">
+        <div class="empty-state empty-state-compact" th:if="${#lists.isEmpty(concepts)}">
+            <svg th:replace="~{fragments/icons :: icon('search-x')}"></svg>
+            <p>Nenhum conceito encontrado no RxNorm.</p>
+        </div>
+        <div class="table-wrap table-framed" th:unless="${#lists.isEmpty(concepts)}">
+            <table class="table">
+                <caption class="visually-hidden">Conceitos encontrados no RxNorm</caption>
+                <thead>
+                <tr>
+                    <th scope="col">RxCUI</th>
+                    <th scope="col">Nome canônico</th>
+                    <th scope="col">Tipo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="concept : ${concepts}">
+                    <td>
+                        <a class="mono" th:href="'https://mor.nlm.nih.gov/RxNav/search?searchBy=RXCUI&searchTerm=' + ${concept.rxcui}"
+                           target="_blank" rel="noopener noreferrer">
+                            <span th:text="${concept.rxcui}">723</span>
+                            <svg th:replace="~{fragments/icons :: icon('external-link')}"></svg>
+                            <span class="visually-hidden">(abre em nova aba)</span>
+                        </a>
+                    </td>
+                    <td class="cell-strong" th:text="${concept.name}">amoxicillin</td>
+                    <td th:with="tty=${concept.termTypeDetails().orElse(null)}">
+                        <th:block th:if="${tty}">
+                            <abbr class="code-tag" tabindex="0" th:text="${concept.termType}"
+                                  th:attr="data-tooltip=|tty-${concept.rxcui}|, aria-describedby=|tty-${concept.rxcui}|">IN</abbr>
+                            <span class="tooltip-source" role="tooltip" hidden th:id="|tty-${concept.rxcui}|">
+                                <strong th:text="${tty.label()}">Princípio ativo</strong>
+                                <span class="tooltip-meta" th:text="${tty.officialName()}">Ingredient</span>
+                                <span th:text="${tty.description()}">Substância que dá ao medicamento seu efeito clínico.</span>
+                                <span class="tooltip-example" th:text="|Ex.: ${tty.example()}|">Ex.: Fluoxetine</span>
+                            </span>
+                        </th:block>
+                        <span class="code-tag" th:unless="${tty}" th:text="${concept.termType}">IN</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="hint table-hint" th:unless="${#lists.isEmpty(concepts)}">
+            Passe o mouse, toque ou navegue com Tab até o tipo para ver o que ele significa.
+        </p>
+    </th:block>
+</th:block>
+
+<th:block th:fragment="cnpj">
+    <th:block th:if="${error}">
+        <div th:replace="~{fragments/feedback :: alert('error', ${error})}"></div>
+    </th:block>
+    <div class="record" th:if="${company}">
+        <div class="record-header">
+            <div>
+                <p class="record-title" th:text="${company.legalName}">Razão social</p>
+                <p class="mono muted" th:text="${company.cnpj.formatted()}">00.000.000/0000-00</p>
+            </div>
+            <span class="badge badge-success" th:if="${company.active}">
+                <svg th:replace="~{fragments/icons :: icon('circle-check')}"></svg> Apto a fornecer
+            </span>
+            <span class="badge badge-danger" th:unless="${company.active}">
+                <svg th:replace="~{fragments/icons :: icon('circle-x')}"></svg> Fornecimento bloqueado
+            </span>
+        </div>
+        <dl class="details">
+            <dt>Nome fantasia</dt>
+            <dd th:text="${#strings.isEmpty(company.tradeName)} ? '—' : ${company.tradeName}">Nome fantasia</dd>
+            <dt>Município</dt>
+            <dd th:text="${company.city} + ' / ' + ${company.state}">Cidade / UF</dd>
+            <dt>Situação cadastral</dt>
+            <dd>
+                <span class="status" th:classappend="${company.active} ? 'status-ok' : 'status-blocked'"
+                      th:text="${company.registrationStatus}">ATIVA</span>
+            </dd>
+        </dl>
+    </div>
+</th:block>
 
 </body>
 </html>

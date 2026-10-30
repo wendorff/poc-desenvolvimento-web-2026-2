@@ -20,9 +20,9 @@ import java.util.List;
 public class NavigationAdvice {
 
     private static final List<NavItem> MODULES = List.of(
-            new NavItem("Usuários", "/users", "Cadastro de usuários e do papel de cada um"),
-            new NavItem("Papéis", "/roles", "Níveis de acesso usados nas permissões do sistema"),
-            new NavItem("Integrações", "/integrations", "Consultas à ANVISA, ao RxNav e à BrasilAPI"));
+            new NavItem("Usuários", "/users", "Cadastro de usuários e do papel de cada um", "users"),
+            new NavItem("Papéis", "/roles", "Níveis de acesso usados nas permissões do sistema", "shield-check"),
+            new NavItem("Integrações", "/integrations", "Consultas à ANVISA, ao RxNav e à BrasilAPI", "plug"));
 
     private final WebInvocationPrivilegeEvaluator privileges;
 

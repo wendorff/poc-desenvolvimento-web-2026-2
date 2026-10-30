@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* Mensagem fixa no contexto (formulário, resultado de consulta). level: error, warning, info, success */-->
+<div th:fragment="alert(level, message)" class="alert" th:classappend="|alert-${level}|"
+     th:attr="role=${level == 'error'} ? 'alert' : 'status'">
+    <svg th:replace="~{fragments/icons :: icon(${level == 'error'} ? 'circle-x' : (${level == 'success'} ? 'circle-check' : (${level == 'warning'} ? 'triangle-alert' : 'info')))}"></svg>
+    <p th:text="${message}">Mensagem</p>
+</div>
+
+<!--/* Aviso flutuante. O de sucesso some sozinho; o de erro fica até ser fechado. level: success, error */-->
+<div th:fragment="toast(level, message)" class="toast" th:classappend="|toast-${level}|"
+     th:attr="role=${level == 'error'} ? 'alert' : 'status', data-autodismiss=${level == 'success'} ? 'true'">
+    <svg th:replace="~{fragments/icons :: icon(${level == 'error'} ? 'circle-x' : 'circle-check')}"></svg>
+    <p class="toast-message" th:text="${message}">Mensagem</p>
+    <button type="button" class="toast-close" data-dismiss="toast" aria-label="Fechar aviso">
+        <svg th:replace="~{fragments/icons :: icon('x')}"></svg>
+    </button>
+</div>
+
+<!--/* Avisos de uma resposta parcial do htmx: entram na região de avisos (swap out-of-band) */-->
+<th:block th:fragment="oob-toasts">
+    <div th:if="${notice}" hx-swap-oob="beforeend:#toast-region">
+        <div th:replace="~{fragments/feedback :: toast('success', ${notice})}"></div>
+    </div>
+    <div th:if="${error}" hx-swap-oob="beforeend:#toast-region">
+        <div th:replace="~{fragments/feedback :: toast('error', ${error})}"></div>
+    </div>
+</th:block>
+
+<!--/* Confirmação usada pelo hx-confirm (ver confirm.js). Cancelar recebe o foco ao abrir. */-->
+<dialog th:fragment="confirm-dialog" id="confirm-dialog" class="dialog"
+        aria-labelledby="confirm-question" aria-describedby="confirm-note">
+    <form method="dialog" class="dialog-body">
+        <span class="dialog-icon">
+            <svg th:replace="~{fragments/icons :: icon('triangle-alert')}"></svg>
+        </span>
+        <div>
+            <h2 id="confirm-question">Confirmar ação?</h2>
+            <p id="confirm-note">Esta ação não pode ser desfeita.</p>
+        </div>
+        <div class="dialog-actions">
+            <button type="submit" value="cancel" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" value="confirm" class="btn btn-danger" data-confirm-accept>Confirmar</button>
+        </div>
+    </form>
+</dialog>
+
+</body>
+</html>

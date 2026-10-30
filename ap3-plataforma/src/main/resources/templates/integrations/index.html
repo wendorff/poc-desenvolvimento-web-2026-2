@@ -1,57 +1,98 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Integrações')}"></head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: page('Integrações', '/integrations', ~{::content})}">
 <body>
+<th:block th:fragment="content">
 
-<header th:replace="~{fragments/layout :: header('/integrations')}"></header>
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Consultas externas</p>
+            <h1>Integrações</h1>
+            <p class="page-lead">
+                Clientes prontos para os cadastros de medicamentos e fornecedores. Nesta versão eles
+                podem ser testados aqui; nas próximas etapas passam a preencher os formulários.
+            </p>
+        </div>
+    </header>
 
-<main>
-
-    <section>
-        <h2>Integrações externas</h2>
-        <p class="muted">
-            Clientes prontos para os cadastros de medicamentos e fornecedores. Nesta versão eles
-            podem ser testados por aqui; nas próximas etapas passam a preencher os formulários.
-        </p>
+    <section class="panel" aria-labelledby="anvisa-title">
+        <header class="panel-header">
+            <div class="panel-title">
+                <span class="icon-tile"><svg th:replace="~{fragments/icons :: icon('file-text')}"></svg></span>
+                <div>
+                    <h2 id="anvisa-title">ANVISA · Bulário Eletrônico</h2>
+                    <p>Registro do medicamento e links das bulas profissional e do paciente.</p>
+                </div>
+            </div>
+        </header>
+        <div class="panel-body stack">
+            <form class="lookup-form" th:attr="hx-get=@{/integrations/anvisa}" hx-target="#anvisa-result"
+                  hx-indicator="find button" hx-disabled-elt="find button" hx-sync="this:replace">
+                <label class="visually-hidden" for="anvisa-term">Nome do produto</label>
+                <input id="anvisa-term" type="text" name="productName" required minlength="3"
+                       placeholder="Nome do produto, ex.: amoxicilina" autocomplete="off">
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner htmx-indicator" aria-hidden="true"><svg th:replace="~{fragments/icons :: icon('loader')}"></svg></span>
+                    <span>Consultar</span>
+                </button>
+            </form>
+            <div th:replace="~{fragments/feedback :: alert('warning', 'A ANVISA protege a API com um firewall que pode recusar chamadas feitas por servidores (HTTP 403). Quando isso acontece, a consulta informa o bloqueio.')}"></div>
+            <div id="anvisa-result" class="lookup-result" aria-live="polite"></div>
+        </div>
     </section>
 
-    <section>
-        <h2>ANVISA, Bulário Eletrônico</h2>
-        <p class="muted">Busca o registro do medicamento e os links das bulas profissional e do paciente.</p>
-        <form class="inline" th:attr="hx-get=@{/integrations/anvisa}" hx-target="#anvisa-result" hx-indicator="#anvisa-loading">
-            <input type="text" name="productName" placeholder="Nome do produto, ex.: amoxicilina" required>
-            <button type="submit">Consultar</button>
-            <span id="anvisa-loading" class="htmx-indicator">Consultando...</span>
-        </form>
-        <p class="note">
-            A ANVISA protege a API com um firewall que pode recusar chamadas feitas por servidores (HTTP 403).
-        </p>
-        <div id="anvisa-result"></div>
+    <section class="panel" aria-labelledby="rxnav-title">
+        <header class="panel-header">
+            <div class="panel-title">
+                <span class="icon-tile"><svg th:replace="~{fragments/icons :: icon('book-open')}"></svg></span>
+                <div>
+                    <h2 id="rxnav-title">RxNav · RxNorm</h2>
+                    <p>Normaliza o nome digitado para o identificador RxCUI e a grafia canônica.</p>
+                </div>
+            </div>
+        </header>
+        <div class="panel-body stack">
+            <form class="lookup-form" th:attr="hx-get=@{/integrations/rxnav}" hx-target="#rxnav-result"
+                  hx-indicator="find button" hx-disabled-elt="find button" hx-sync="this:replace">
+                <label class="visually-hidden" for="rxnav-term">Princípio ativo</label>
+                <input id="rxnav-term" type="text" name="drugName" required minlength="3"
+                       placeholder="Princípio ativo, ex.: amoxicillin" autocomplete="off" lang="en">
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner htmx-indicator" aria-hidden="true"><svg th:replace="~{fragments/icons :: icon('loader')}"></svg></span>
+                    <span>Consultar</span>
+                </button>
+            </form>
+            <div id="rxnav-result" class="lookup-result" aria-live="polite"></div>
+        </div>
     </section>
 
-    <section>
-        <h2>RxNav, RxNorm</h2>
-        <p class="muted">Normaliza o nome digitado para o identificador RxCUI e a grafia canônica.</p>
-        <form class="inline" th:attr="hx-get=@{/integrations/rxnav}" hx-target="#rxnav-result" hx-indicator="#rxnav-loading">
-            <input type="text" name="drugName" placeholder="Princípio ativo, ex.: amoxicilina" required>
-            <button type="submit">Consultar</button>
-            <span id="rxnav-loading" class="htmx-indicator">Consultando...</span>
-        </form>
-        <div id="rxnav-result"></div>
+    <section class="panel" aria-labelledby="cnpj-title">
+        <header class="panel-header">
+            <div class="panel-title">
+                <span class="icon-tile"><svg th:replace="~{fragments/icons :: icon('building')}"></svg></span>
+                <div>
+                    <h2 id="cnpj-title">BrasilAPI · Consulta de CNPJ</h2>
+                    <p>Valida o CNPJ e traz os dados cadastrais e a situação na Receita Federal.</p>
+                </div>
+            </div>
+        </header>
+        <div class="panel-body stack">
+            <form class="lookup-form" th:attr="hx-get=@{/integrations/cnpj}" hx-target="#cnpj-result"
+                  hx-indicator="find button" hx-disabled-elt="find button" hx-sync="this:replace">
+                <label class="visually-hidden" for="cnpj-term">CNPJ</label>
+                <input id="cnpj-term" class="mono" type="text" name="cnpj" required data-mask="cnpj"
+                       maxlength="18" placeholder="00.000.000/0000-00" autocomplete="off" spellcheck="false"
+                       aria-describedby="cnpj-hint">
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner htmx-indicator" aria-hidden="true"><svg th:replace="~{fragments/icons :: icon('loader')}"></svg></span>
+                    <span>Consultar</span>
+                </button>
+            </form>
+            <p class="hint" id="cnpj-hint">Aceita o formato numérico e o alfanumérico da Receita Federal.</p>
+            <div id="cnpj-result" class="lookup-result" aria-live="polite"></div>
+        </div>
     </section>
 
-    <section>
-        <h2>BrasilAPI, consulta de CNPJ</h2>
-        <p class="muted">Valida o CNPJ e traz os dados cadastrais e a situação na Receita Federal.</p>
-        <form class="inline" th:attr="hx-get=@{/integrations/cnpj}" hx-target="#cnpj-result" hx-indicator="#cnpj-loading">
-            <input type="text" name="cnpj" placeholder="00.000.000/0000-00" required>
-            <button type="submit">Consultar</button>
-            <span id="cnpj-loading" class="htmx-indicator">Consultando...</span>
-        </form>
-        <div id="cnpj-result"></div>
-    </section>
-
-</main>
-
+</th:block>
 </body>
 </html>

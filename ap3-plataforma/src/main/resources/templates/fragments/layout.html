@@ -1,41 +1,82 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title, active, content)">
 
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${title} + ' - SGFH'">SGFH</title>
+    <meta name="color-scheme" content="light">
+    <title th:text="|${title} · SGFH|">SGFH</title>
     <meta name="csrf-header" th:if="${_csrf}" th:content="${_csrf.headerName}">
     <meta name="csrf-token" th:if="${_csrf}" th:content="${_csrf.token}">
-    <link rel="stylesheet" th:href="@{/style.css}">
-    <script th:src="@{/htmx.min.js}"></script>
-    <script th:src="@{/app.js}"></script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/assets/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/assets/app.css}">
+    <script type="module" th:src="@{/assets/app.js}"></script>
 </head>
 
-<body>
+<body hx-boost="true">
 
-<header th:fragment="header(active)">
-    <div class="topbar">
+<a class="skip-link" href="#main">Ir para o conteúdo</a>
+
+<div class="app">
+    <aside class="sidebar">
         <a class="brand" th:href="@{/}">
-            <strong>SGFH</strong>
-            <span>Sistema de Gestão de Farmácia Hospitalar</span>
+            <span class="brand-mark"><svg th:replace="~{fragments/icons :: icon('pill')}"></svg></span>
+            <span class="brand-text">
+                <strong>SGFH</strong>
+                <span>Farmácia Hospitalar</span>
+            </span>
         </a>
-        <div class="session" th:if="${currentUser}">
-            <span th:text="${currentUser.name}">Usuário</span>
-            <span class="badge" th:text="${currentUser.roleName}">PAPEL</span>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="link">Sair</button>
+
+        <p class="env-tag">Ambiente de demonstração</p>
+
+        <nav class="nav" aria-label="Módulos">
+            <p class="nav-heading">Módulos</p>
+            <a class="nav-link" th:href="@{/}" th:aria-current="${active == '/'} ? 'page'">
+                <svg th:replace="~{fragments/icons :: icon('house')}"></svg>
+                <span>Início</span>
+            </a>
+            <a class="nav-link"
+               th:each="item : ${navItems}"
+               th:href="@{${item.path}}"
+               th:aria-current="${active == item.path} ? 'page'">
+                <svg th:replace="~{fragments/icons :: icon(${item.icon})}"></svg>
+                <span th:text="${item.label}">Módulo</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-user" th:if="${currentUser}">
+            <span class="avatar" aria-hidden="true"
+                  th:text="${#strings.toUpperCase(#strings.substring(currentUser.name, 0, 1))}">U</span>
+            <span class="sidebar-user-info">
+                <strong th:text="${currentUser.name}">Usuário</strong>
+                <span th:text="${currentUser.roleName}">PAPEL</span>
+            </span>
+            <form th:action="@{/logout}" method="post" hx-boost="false">
+                <button type="submit" class="sidebar-logout">
+                    <svg th:replace="~{fragments/icons :: icon('log-out')}"></svg>
+                    <span>Sair</span>
+                </button>
             </form>
         </div>
-    </div>
-    <nav>
-        <a th:href="@{/}" th:classappend="${active == '/'} ? 'active'">Início</a>
-        <a th:each="item : ${navItems}"
-           th:href="@{${item.path}}"
-           th:text="${item.label}"
-           th:classappend="${active == item.path} ? 'active'">Módulo</a>
-    </nav>
-</header>
+    </aside>
+
+    <main id="main" class="content" tabindex="-1" th:insert="${content}"></main>
+</div>
+
+<!--/* Dica flutuante (tooltip.js). Só visual: leitores de tela recebem o texto pelo aria-describedby */-->
+<div id="tooltip" class="tooltip" aria-hidden="true" hidden></div>
+
+<div id="toast-region" class="toast-region" aria-live="polite">
+    <th:block th:if="${notice}">
+        <div th:replace="~{fragments/feedback :: toast('success', ${notice})}"></div>
+    </th:block>
+</div>
+
+<template id="toast-error-template">
+    <div th:replace="~{fragments/feedback :: toast('error', '')}"></div>
+</template>
+
+<dialog th:replace="~{fragments/feedback :: confirm-dialog}"></dialog>
 
 </body>
 </html>

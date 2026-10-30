@@ -1,47 +1,76 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: page('Início', '/', ~{::content})}">
 <body>
+<th:block th:fragment="content">
 
-<header th:replace="~{fragments/layout :: header('/')}"></header>
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Início</p>
+            <h1 th:text="|Olá, ${currentUser.name}|">Olá</h1>
+            <p class="page-lead">
+                Você está conectado como
+                <span class="code-tag" th:text="${currentUser.roleName}">PAPEL</span>.
+                O menu mostra apenas os módulos que este papel pode acessar.
+            </p>
+        </div>
+    </header>
 
-<main>
-
-    <section>
-        <h2 th:text="'Olá, ' + ${currentUser.name}">Olá</h2>
-        <p>
-            Você está conectado com o papel
-            <span class="badge" th:text="${currentUser.roleName}">PAPEL</span>.
-            O menu mostra apenas os módulos que este papel pode acessar.
-        </p>
-    </section>
-
-    <section>
-        <h2>Módulos disponíveis</h2>
-        <p class="empty" th:if="${#lists.isEmpty(navItems)}">
-            Nenhum módulo liberado para este papel nesta versão.
-        </p>
-        <div class="cards">
-            <a class="card" th:each="item : ${navItems}" th:href="@{${item.path}}">
-                <strong th:text="${item.label}">Módulo</strong>
-                <span th:text="${item.description}">Descrição</span>
-            </a>
+    <section class="panel" aria-labelledby="modules-title">
+        <header class="panel-header">
+            <h2 id="modules-title">Módulos disponíveis</h2>
+        </header>
+        <div class="panel-body">
+            <div class="empty-state" th:if="${#lists.isEmpty(navItems)}">
+                <svg th:replace="~{fragments/icons :: icon('lock')}"></svg>
+                <p>Nenhum módulo liberado para este papel nesta versão.</p>
+            </div>
+            <div class="module-grid" th:unless="${#lists.isEmpty(navItems)}">
+                <a class="module-card" th:each="item : ${navItems}" th:href="@{${item.path}}">
+                    <span class="icon-tile"><svg th:replace="~{fragments/icons :: icon(${item.icon})}"></svg></span>
+                    <span class="module-text">
+                        <strong th:text="${item.label}">Módulo</strong>
+                        <span th:text="${item.description}">Descrição</span>
+                    </span>
+                    <svg th:replace="~{fragments/icons :: icon('arrow-right')}"></svg>
+                </a>
+            </div>
         </div>
     </section>
 
-    <section>
-        <h2>Próximas etapas</h2>
-        <ul class="roadmap">
-            <li><strong>Medicamentos e lotes</strong>: cadastro com dados técnicos vindos da ANVISA e RxCUI do RxNav</li>
-            <li><strong>Fornecedores</strong>: cadastro validado pelo CNPJ na BrasilAPI</li>
-            <li><strong>Movimentações e dispensação</strong>: entradas, saídas e dispensação por paciente e setor</li>
-            <li><strong>Alertas</strong>: estoque mínimo e lotes próximos ao vencimento</li>
-            <li><strong>Trilha de auditoria</strong>: autor, data e valores alterados em cada operação</li>
-            <li><strong>Painel de métricas</strong>: uso e saúde da aplicação</li>
-        </ul>
+    <section class="panel" aria-labelledby="roadmap-title">
+        <header class="panel-header">
+            <h2 id="roadmap-title">Próximas etapas</h2>
+            <span class="badge badge-neutral">Planejado</span>
+        </header>
+        <ol class="roadmap">
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Medicamentos e lotes</strong><span>Cadastro com dados técnicos vindos da ANVISA e RxCUI do RxNav</span></div>
+            </li>
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Fornecedores</strong><span>Cadastro validado pelo CNPJ na BrasilAPI</span></div>
+            </li>
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Movimentações e dispensação</strong><span>Entradas, saídas e dispensação por paciente e setor</span></div>
+            </li>
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Alertas</strong><span>Estoque mínimo e lotes próximos ao vencimento</span></div>
+            </li>
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Trilha de auditoria</strong><span>Autor, data e valores alterados em cada operação</span></div>
+            </li>
+            <li>
+                <svg th:replace="~{fragments/icons :: icon('clock')}"></svg>
+                <div><strong>Painel de métricas</strong><span>Uso e saúde da aplicação</span></div>
+            </li>
+        </ol>
     </section>
 
-</main>
-
+</th:block>
 </body>
 </html>

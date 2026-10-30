@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Acesso negado')}"></head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: page('Acesso negado', '', ~{::content})}">
 <body>
+<th:block th:fragment="content">
 
-<header th:replace="~{fragments/layout :: header('')}"></header>
-
-<main>
-    <section>
-        <h2>Acesso negado</h2>
-        <p>O seu papel não tem permissão para acessar esta página.</p>
-        <a th:href="@{/}">Voltar ao início</a>
+    <section class="panel status-page">
+        <span class="icon-tile icon-tile-lg icon-tile-danger">
+            <svg th:replace="~{fragments/icons :: icon('shield-alert')}"></svg>
+        </span>
+        <p class="eyebrow">Erro 403</p>
+        <h1>Acesso negado</h1>
+        <p class="page-lead">O seu papel não tem permissão para acessar esta página.</p>
+        <a class="btn btn-primary" th:href="@{/}">
+            <svg th:replace="~{fragments/icons :: icon('house')}"></svg>
+            <span>Voltar ao início</span>
+        </a>
     </section>
-</main>
 
+</th:block>
 </body>
 </html>

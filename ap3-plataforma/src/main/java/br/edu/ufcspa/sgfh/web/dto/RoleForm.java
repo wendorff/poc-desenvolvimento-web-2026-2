@@ -13,7 +13,20 @@ public record RoleForm(
         @Size(max = 160, message = "A descrição deve ter no máximo 160 caracteres")
         String description
 ) {
+    /**
+     * Campo enviado em branco vira null: o formulário de cadastro não volta como edição
+     * (id ""), e o @Size não repete o erro do @NotBlank no nome vazio.
+     */
+    public RoleForm {
+        id = blankToNull(id);
+        name = blankToNull(name);
+    }
+
     public static RoleForm empty() {
         return new RoleForm(null, null, null);
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 }

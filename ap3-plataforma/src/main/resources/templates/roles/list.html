@@ -1,49 +1,76 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Papéis')}"></head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: page('Papéis', '/roles', ~{::content})}">
 <body>
+<th:block th:fragment="content">
 
-<header th:replace="~{fragments/layout :: header('/roles')}"></header>
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Administração</p>
+            <h1>Papéis</h1>
+            <p class="page-lead">
+                Níveis de acesso usados nas permissões. O papel ADMINISTRADOR não pode ser renomeado
+                e um papel em uso não pode ser excluído.
+            </p>
+        </div>
+    </header>
 
-<main>
+    <section class="panel" aria-labelledby="role-form-title">
+        <header class="panel-header">
+            <h2 id="role-form-title" th:text="${roleForm.id} == null ? 'Novo papel' : 'Editar papel'">Novo papel</h2>
+            <span class="badge badge-warning" th:if="${roleForm.id != null}">Editando</span>
+        </header>
 
-    <section>
-        <h2 th:text="${roleForm.id} == null ? 'Novo papel' : 'Editar papel'">Novo papel</h2>
+        <form class="panel-body form" th:action="@{/roles}" th:object="${roleForm}" method="post" novalidate
+              hx-disabled-elt="find button[type='submit']" hx-indicator="find button[type='submit']">
 
-        <div class="error" th:if="${error}" th:text="${error}"></div>
+            <div class="alert alert-error" role="alert" tabindex="-1" autofocus
+                 th:if="${#fields.hasAnyErrors() or error != null}">
+                <svg th:replace="~{fragments/icons :: icon('circle-x')}"></svg>
+                <div>
+                    <p class="alert-title">Não foi possível salvar o papel.</p>
+                    <p th:text="${error} ?: 'Revise os campos destacados abaixo.'">Revise os campos destacados abaixo.</p>
+                </div>
+            </div>
 
-        <form th:action="@{/roles}" method="post">
-            <input type="hidden" name="id" th:value="${roleForm.id}">
+            <input type="hidden" th:field="*{id}">
 
-            <label>
-                <span>Nome</span>
-                <input type="text" name="name" th:value="${roleForm.name}">
-                <span class="field-error"
-                      th:if="${#fields.hasErrors('roleForm.name')}"
-                      th:errors="${roleForm.name}"></span>
-            </label>
+            <div class="form-grid">
+                <div class="field">
+                    <label for="name">Nome <span class="required" aria-hidden="true">*</span></label>
+                    <input type="text" th:field="*{name}" required maxlength="40" autocomplete="off" spellcheck="false"
+                           th:autofocus="${roleForm.id != null and !#fields.hasAnyErrors()}"
+                           th:attr="aria-invalid=${#fields.hasErrors('name')} ? 'true', aria-describedby=${#fields.hasErrors('name')} ? 'name-error' : 'name-hint'">
+                    <p class="hint" id="name-hint" th:unless="${#fields.hasErrors('name')}">Entre 3 e 40 caracteres, ex.: FARMACEUTICO.</p>
+                    <p class="field-error" id="name-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
 
-            <label>
-                <span>Descrição</span>
-                <input type="text" name="description" th:value="${roleForm.description}">
-                <span class="field-error"
-                      th:if="${#fields.hasErrors('roleForm.description')}"
-                      th:errors="${roleForm.description}"></span>
-            </label>
+                <div class="field">
+                    <label for="description">Descrição</label>
+                    <input type="text" th:field="*{description}" maxlength="160" autocomplete="off"
+                           th:attr="aria-invalid=${#fields.hasErrors('description')} ? 'true', aria-describedby=${#fields.hasErrors('description')} ? 'description-error'">
+                    <p class="field-error" id="description-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                </div>
+            </div>
 
-            <button type="submit">Salvar</button>
-            <a th:href="@{/roles}" th:if="${roleForm.id} != null">
-                <button type="button" class="secondary">Cancelar</button>
-            </a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner htmx-indicator" aria-hidden="true"><svg th:replace="~{fragments/icons :: icon('loader')}"></svg></span>
+                    <span th:text="${roleForm.id} == null ? 'Cadastrar papel' : 'Salvar alterações'">Cadastrar papel</span>
+                </button>
+                <a class="btn btn-secondary" th:href="@{/roles}" th:if="${roleForm.id != null}">Cancelar</a>
+                <p class="form-note"><span class="required" aria-hidden="true">*</span> Campos obrigatórios</p>
+            </div>
         </form>
     </section>
 
-    <section>
-        <h2>Papéis cadastrados</h2>
+    <section class="panel" aria-labelledby="roles-title">
+        <header class="panel-header">
+            <h2 id="roles-title">Papéis cadastrados</h2>
+        </header>
         <div th:replace="~{roles/table :: table}"></div>
     </section>
 
-</main>
-
+</th:block>
 </body>
 </html>

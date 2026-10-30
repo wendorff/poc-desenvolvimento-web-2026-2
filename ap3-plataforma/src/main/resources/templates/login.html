@@ -3,24 +3,49 @@
 <head th:replace="~{fragments/layout :: head('Entrar')}"></head>
 <body class="login-page">
 
-<main class="login-card">
-    <h1>SGFH</h1>
-    <p class="muted">Sistema de Gestão de Farmácia Hospitalar</p>
+<main class="login">
+    <section class="login-brand">
+        <div class="brand brand-lg">
+            <span class="brand-mark"><svg th:replace="~{fragments/icons :: icon('pill')}"></svg></span>
+            <span class="brand-text">
+                <strong>SGFH</strong>
+                <span>Sistema de Gestão de Farmácia Hospitalar</span>
+            </span>
+        </div>
+        <p class="login-tagline">
+            Controle de estoque e dispensação de medicamentos da farmácia hospitalar.
+        </p>
+        <p class="env-tag">Ambiente de demonstração · dados fictícios</p>
+    </section>
 
-    <div class="error" th:if="${param.error}">E-mail ou senha inválidos, ou usuário inativo.</div>
-    <div class="notice" th:if="${param.logout}">Você saiu do sistema.</div>
+    <section class="login-panel">
+        <div class="login-card">
+            <h1>Entrar</h1>
+            <p class="muted">Acesso restrito a profissionais autorizados.</p>
 
-    <form th:action="@{/login}" method="post">
-        <label>
-            <span>E-mail</span>
-            <input type="email" name="email" autocomplete="username" required autofocus>
-        </label>
-        <label>
-            <span>Senha</span>
-            <input type="password" name="password" autocomplete="current-password" required>
-        </label>
-        <button type="submit">Entrar</button>
-    </form>
+            <th:block th:if="${param.error}">
+                <div th:replace="~{fragments/feedback :: alert('error', 'E-mail ou senha inválidos, ou usuário inativo.')}"></div>
+            </th:block>
+            <th:block th:if="${param.logout}">
+                <div th:replace="~{fragments/feedback :: alert('success', 'Você saiu do sistema.')}"></div>
+            </th:block>
+
+            <form class="form" th:action="@{/login}" method="post">
+                <div class="field">
+                    <label for="email">E-mail</label>
+                    <input id="email" type="email" name="email" autocomplete="username" required autofocus>
+                </div>
+                <div class="field">
+                    <label for="password">Senha</label>
+                    <input id="password" type="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <svg th:replace="~{fragments/icons :: icon('lock')}"></svg>
+                    <span>Entrar</span>
+                </button>
+            </form>
+        </div>
+    </section>
 </main>
 
 </body>

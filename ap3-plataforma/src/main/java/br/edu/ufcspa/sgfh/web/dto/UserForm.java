@@ -22,8 +22,21 @@ public record UserForm(
 
         Boolean active
 ) {
+    /**
+     * Campo enviado em branco vira null: o formulário de cadastro não volta como edição
+     * (id ""), e o @Size não repete o erro do @NotBlank no nome vazio.
+     */
+    public UserForm {
+        id = blankToNull(id);
+        name = blankToNull(name);
+    }
+
     public static UserForm empty() {
         return new UserForm(null, null, null, null, null, Boolean.TRUE);
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 
     public boolean isActive() {

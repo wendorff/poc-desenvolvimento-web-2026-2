@@ -34,3 +34,7 @@ build/
 
 ### SGFH ###
 .DS_Store
+
+### Frontend (Vite) ###
+node/
+node_modules/
