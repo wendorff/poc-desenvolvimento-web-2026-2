@@ -64,7 +64,7 @@ regras, então não há duplicação entre o que a tela mostra e o que o servido
 | Segurança | Spring Security (sessão, BCrypt, CSRF) |
 | Integrações | Spring `RestClient` |
 | Banco de dados | MongoDB 7 |
-| Build | Maven (wrapper incluído), que também baixa o Node e roda o build do Vite |
+| Build | Gradle (wrapper incluído), que também baixa o Node e roda o build do Vite |
 | Execução | Docker Compose |
 
 ## Como executar
@@ -87,18 +87,18 @@ docker compose down -v
 
 ### Opção 2: Rodar local com Mongo em container
 
-Requer JDK 25. Não é preciso ter Node instalado: na primeira execução o Maven baixa um Node
-próprio do projeto (pasta `node/`) e compila o frontend antes de subir a aplicação.
+Requer JDK 25. Não é preciso ter Node instalado: na primeira execução o Gradle baixa um Node
+próprio do projeto (pasta `.gradle/nodejs`) e compila o frontend antes de subir a aplicação.
 
 ```bash
 docker run -d -p 27017:27017 --name sgfh-mongo mongo:7
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 
 ### Testes
 
 ```bash
-./mvnw test
+./gradlew test
 ```
 
 Os testes não precisam de banco nem de internet: os serviços usam repositórios em memória e
@@ -156,7 +156,7 @@ o bloqueio quando ele acontece. RxNav e BrasilAPI respondem normalmente.
 
 As telas são renderizadas no servidor (Thymeleaf) e o htmx troca só os pedaços que mudam, então
 não há estado de tela duplicado no navegador. O código do frontend fica em `src/main/frontend` e o
-Vite gera o bundle em `target/classes/static/assets`, que o Spring serve em `/assets` com o hash do
+Vite gera o bundle em `build/frontend/static/assets`, que o Spring serve em `/assets` com o hash do
 conteúdo na URL (cache longo no navegador, sem risco de arquivo desatualizado).
 
 | Caminho | Conteúdo |
@@ -186,7 +186,7 @@ URLs dos arquivos e deixe o Vite recompilando a cada alteração (requer Node 20
 basta recarregar a página para ver a mudança:
 
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.arguments=--spring.web.resources.chain.cache=false
+./gradlew bootRun --args=--spring.web.resources.chain.cache=false
 npm run watch   # em outro terminal
 ```
 

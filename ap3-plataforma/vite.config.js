@@ -2,11 +2,12 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 
 const frontend = fileURLToPath(new URL('./src/main/frontend', import.meta.url))
-const assets = fileURLToPath(new URL('./target/classes/static/assets', import.meta.url))
+const assets = fileURLToPath(new URL('./build/frontend/static/assets', import.meta.url))
 
-// O Vite empacota htmx, scripts, CSS e fontes em target/classes/static/assets, servido pelo
-// Spring em /assets. Os nomes são fixos porque o Spring já acrescenta o hash do conteúdo na
-// URL (spring.web.resources.chain), então o navegador nunca usa um arquivo desatualizado.
+// O Vite empacota htmx, scripts, CSS e fontes em build/frontend/static/assets, que o Gradle
+// inclui nos recursos da aplicação e o Spring serve em /assets. Os nomes são fixos porque o
+// Spring já acrescenta o hash do conteúdo na URL (spring.web.resources.chain), então o
+// navegador nunca usa um arquivo desatualizado.
 export default defineConfig({
   root: frontend,
   base: './',

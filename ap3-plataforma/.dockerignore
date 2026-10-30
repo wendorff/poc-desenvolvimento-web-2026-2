@@ -1,6 +1,6 @@
-target
+build
+.gradle
 .git
 .idea
 *.iml
-node
 node_modules
