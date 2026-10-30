@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Acesso negado')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header('')}"></header>
+
+<main>
+    <section>
+        <h2>Acesso negado</h2>
+        <p>O seu papel não tem permissão para acessar esta página.</p>
+        <a th:href="@{/}">Voltar ao início</a>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' - SGFH'">SGFH</title>
+    <meta name="csrf-header" th:if="${_csrf}" th:content="${_csrf.headerName}">
+    <meta name="csrf-token" th:if="${_csrf}" th:content="${_csrf.token}">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <script th:src="@{/htmx.min.js}"></script>
+    <script th:src="@{/app.js}"></script>
+</head>
+
+<body>
+
+<header th:fragment="header(active)">
+    <div class="topbar">
+        <a class="brand" th:href="@{/}">
+            <strong>SGFH</strong>
+            <span>Sistema de Gestão de Farmácia Hospitalar</span>
+        </a>
+        <div class="session" th:if="${currentUser}">
+            <span th:text="${currentUser.name}">Usuário</span>
+            <span class="badge" th:text="${currentUser.roleName}">PAPEL</span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="link">Sair</button>
+            </form>
+        </div>
+    </div>
+    <nav>
+        <a th:href="@{/}" th:classappend="${active == '/'} ? 'active'">Início</a>
+        <a th:each="item : ${navItems}"
+           th:href="@{${item.path}}"
+           th:text="${item.label}"
+           th:classappend="${active == item.path} ? 'active'">Módulo</a>
+    </nav>
+</header>
+
+</body>
+</html>

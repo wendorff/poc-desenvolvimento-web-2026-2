@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="anvisa">
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <th:block th:unless="${error}">
+        <p class="empty" th:if="${#lists.isEmpty(leaflets)}">Nenhum medicamento encontrado.</p>
+        <table th:unless="${#lists.isEmpty(leaflets)}">
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Empresa</th>
+                <th>Registro</th>
+                <th>Bulas</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="leaflet : ${leaflets}">
+                <td th:text="${leaflet.productName}"></td>
+                <td th:text="${leaflet.company}"></td>
+                <td th:text="${leaflet.registrationNumber}"></td>
+                <td>
+                    <a th:if="${leaflet.professionalLeafletUrl}" th:href="${leaflet.professionalLeafletUrl}"
+                       target="_blank" rel="noopener">Profissional</a>
+                    <a th:if="${leaflet.patientLeafletUrl}" th:href="${leaflet.patientLeafletUrl}"
+                       target="_blank" rel="noopener">Paciente</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </th:block>
+</div>
+
+<div th:fragment="rxnav">
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <th:block th:unless="${error}">
+        <p class="empty" th:if="${#lists.isEmpty(concepts)}">Nenhum conceito encontrado no RxNorm.</p>
+        <table th:unless="${#lists.isEmpty(concepts)}">
+            <thead>
+            <tr>
+                <th>RxCUI</th>
+                <th>Nome canônico</th>
+                <th>Tipo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="concept : ${concepts}">
+                <td><a th:href="'https://mor.nlm.nih.gov/RxNav/search?searchBy=RXCUI&searchTerm=' + ${concept.rxcui}"
+                       th:text="${concept.rxcui}" target="_blank" rel="noopener"></a></td>
+                <td th:text="${concept.name}"></td>
+                <td th:text="${concept.termType}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </th:block>
+</div>
+
+<div th:fragment="cnpj">
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <dl class="details" th:if="${company}">
+        <dt>CNPJ</dt>
+        <dd th:text="${company.cnpj.formatted()}"></dd>
+        <dt>Razão social</dt>
+        <dd th:text="${company.legalName}"></dd>
+        <dt>Nome fantasia</dt>
+        <dd th:text="${#strings.isEmpty(company.tradeName)} ? '-' : ${company.tradeName}"></dd>
+        <dt>Município</dt>
+        <dd th:text="${company.city} + ' / ' + ${company.state}"></dd>
+        <dt>Situação</dt>
+        <dd>
+            <span th:text="${company.registrationStatus}"></span>
+            <span class="badge ok" th:if="${company.active}">Apto a fornecer</span>
+            <span class="badge blocked" th:unless="${company.active}">Fornecimento bloqueado</span>
+        </dd>
+    </dl>
+</div>
+
+</body>
+</html>

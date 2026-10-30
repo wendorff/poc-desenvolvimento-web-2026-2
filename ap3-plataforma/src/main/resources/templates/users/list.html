@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Usuários')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header('/users')}"></header>
+
+<main>
+
+    <section>
+        <h2 th:text="${userForm.id} == null ? 'Novo usuário' : 'Editar usuário'">Novo usuário</h2>
+
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/users}" method="post">
+            <input type="hidden" name="id" th:value="${userForm.id}">
+
+            <label>
+                <span>Nome</span>
+                <input type="text" name="name" th:value="${userForm.name}">
+                <span class="field-error"
+                      th:if="${#fields.hasErrors('userForm.name')}"
+                      th:errors="${userForm.name}"></span>
+            </label>
+
+            <label>
+                <span>E-mail</span>
+                <input type="email" name="email" th:value="${userForm.email}">
+                <span class="field-error"
+                      th:if="${#fields.hasErrors('userForm.email')}"
+                      th:errors="${userForm.email}"></span>
+            </label>
+
+            <label>
+                <span th:text="${userForm.id} == null ? 'Senha' : 'Senha (deixe em branco para manter)'">Senha</span>
+                <input type="password" name="password">
+            </label>
+
+            <label>
+                <span>Papel</span>
+                <select name="roleId">
+                    <option value="">Selecione...</option>
+                    <option th:each="role : ${roles}"
+                            th:value="${role.id}"
+                            th:text="${role.name}"
+                            th:selected="${role.id} == ${userForm.roleId}"></option>
+                </select>
+                <span class="field-error"
+                      th:if="${#fields.hasErrors('userForm.roleId')}"
+                      th:errors="${userForm.roleId}"></span>
+            </label>
+
+            <label>
+                <span>Ativo</span>
+                <input type="checkbox" name="active" value="true" th:checked="${userForm.isActive()}">
+            </label>
+
+            <button type="submit">Salvar</button>
+            <a th:href="@{/users}" th:if="${userForm.id} != null">
+                <button type="button" class="secondary">Cancelar</button>
+            </a>
+        </form>
+    </section>
+
+    <section>
+        <h2>Usuários cadastrados</h2>
+        <div th:replace="~{users/table :: table}"></div>
+    </section>
+
+</main>
+
+</body>
+</html>

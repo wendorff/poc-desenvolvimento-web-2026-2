@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body class="login-page">
+
+<main class="login-card">
+    <h1>SGFH</h1>
+    <p class="muted">Sistema de Gestão de Farmácia Hospitalar</p>
+
+    <div class="error" th:if="${param.error}">E-mail ou senha inválidos, ou usuário inativo.</div>
+    <div class="notice" th:if="${param.logout}">Você saiu do sistema.</div>
+
+    <form th:action="@{/login}" method="post">
+        <label>
+            <span>E-mail</span>
+            <input type="email" name="email" autocomplete="username" required autofocus>
+        </label>
+        <label>
+            <span>Senha</span>
+            <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Entrar</button>
+    </form>
+</main>
+
+</body>
+</html>

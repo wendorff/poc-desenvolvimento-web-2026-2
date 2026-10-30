@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header('/')}"></header>
+
+<main>
+
+    <section>
+        <h2 th:text="'Olá, ' + ${currentUser.name}">Olá</h2>
+        <p>
+            Você está conectado com o papel
+            <span class="badge" th:text="${currentUser.roleName}">PAPEL</span>.
+            O menu mostra apenas os módulos que este papel pode acessar.
+        </p>
+    </section>
+
+    <section>
+        <h2>Módulos disponíveis</h2>
+        <p class="empty" th:if="${#lists.isEmpty(navItems)}">
+            Nenhum módulo liberado para este papel nesta versão.
+        </p>
+        <div class="cards">
+            <a class="card" th:each="item : ${navItems}" th:href="@{${item.path}}">
+                <strong th:text="${item.label}">Módulo</strong>
+                <span th:text="${item.description}">Descrição</span>
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <h2>Próximas etapas</h2>
+        <ul class="roadmap">
+            <li><strong>Medicamentos e lotes</strong>: cadastro com dados técnicos vindos da ANVISA e RxCUI do RxNav</li>
+            <li><strong>Fornecedores</strong>: cadastro validado pelo CNPJ na BrasilAPI</li>
+            <li><strong>Movimentações e dispensação</strong>: entradas, saídas e dispensação por paciente e setor</li>
+            <li><strong>Alertas</strong>: estoque mínimo e lotes próximos ao vencimento</li>
+            <li><strong>Trilha de auditoria</strong>: autor, data e valores alterados em cada operação</li>
+            <li><strong>Painel de métricas</strong>: uso e saúde da aplicação</li>
+        </ul>
+    </section>
+
+</main>
+
+</body>
+</html>

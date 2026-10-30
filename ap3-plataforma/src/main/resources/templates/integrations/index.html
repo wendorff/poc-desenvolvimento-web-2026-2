@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Integrações')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header('/integrations')}"></header>
+
+<main>
+
+    <section>
+        <h2>Integrações externas</h2>
+        <p class="muted">
+            Clientes prontos para os cadastros de medicamentos e fornecedores. Nesta versão eles
+            podem ser testados por aqui; nas próximas etapas passam a preencher os formulários.
+        </p>
+    </section>
+
+    <section>
+        <h2>ANVISA, Bulário Eletrônico</h2>
+        <p class="muted">Busca o registro do medicamento e os links das bulas profissional e do paciente.</p>
+        <form class="inline" th:attr="hx-get=@{/integrations/anvisa}" hx-target="#anvisa-result" hx-indicator="#anvisa-loading">
+            <input type="text" name="productName" placeholder="Nome do produto, ex.: amoxicilina" required>
+            <button type="submit">Consultar</button>
+            <span id="anvisa-loading" class="htmx-indicator">Consultando...</span>
+        </form>
+        <p class="note">
+            A ANVISA protege a API com um firewall que pode recusar chamadas feitas por servidores (HTTP 403).
+        </p>
+        <div id="anvisa-result"></div>
+    </section>
+
+    <section>
+        <h2>RxNav, RxNorm</h2>
+        <p class="muted">Normaliza o nome digitado para o identificador RxCUI e a grafia canônica.</p>
+        <form class="inline" th:attr="hx-get=@{/integrations/rxnav}" hx-target="#rxnav-result" hx-indicator="#rxnav-loading">
+            <input type="text" name="drugName" placeholder="Princípio ativo, ex.: amoxicilina" required>
+            <button type="submit">Consultar</button>
+            <span id="rxnav-loading" class="htmx-indicator">Consultando...</span>
+        </form>
+        <div id="rxnav-result"></div>
+    </section>
+
+    <section>
+        <h2>BrasilAPI, consulta de CNPJ</h2>
+        <p class="muted">Valida o CNPJ e traz os dados cadastrais e a situação na Receita Federal.</p>
+        <form class="inline" th:attr="hx-get=@{/integrations/cnpj}" hx-target="#cnpj-result" hx-indicator="#cnpj-loading">
+            <input type="text" name="cnpj" placeholder="00.000.000/0000-00" required>
+            <button type="submit">Consultar</button>
+            <span id="cnpj-loading" class="htmx-indicator">Consultando...</span>
+        </form>
+        <div id="cnpj-result"></div>
+    </section>
+
+</main>
+
+</body>
+</html>
