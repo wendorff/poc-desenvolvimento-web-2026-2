@@ -18,7 +18,7 @@ trilha de auditoria e observabilidade.
 | --- | --- | --- |
 | [`ap1/`](ap1/) | Atividade Prática 1 | Definição inicial do projeto (PDF com as respostas a, b e c) |
 | [`ap2-crud/`](ap2-crud/) | Atividade Prática 2 | CRUD de usuários e papéis com interface gráfica |
-| [`ap3-plataforma/`](ap3-plataforma/) | Atividade Prática 3 | Versão inicial da plataforma: login, controle de acesso por papel, usuários e papéis, integrações externas |
+| [`ap3-plataforma/`](ap3-plataforma/) | Atividade Prática 3 | Versão inicial da plataforma: login, controle de acesso por papel, usuários e papéis, integrações externas; PDF com os avanços e desafios |
 
 ## Como executar a versão atual (AP3)
 
