@@ -41,10 +41,6 @@
   letter-spacing: -0.01em;
 }
 
-.login-brand .env-tag {
-  margin: 0;
-}
-
 .login-panel {
   display: grid;
   place-items: center;
